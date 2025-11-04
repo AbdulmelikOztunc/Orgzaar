@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Orgzaar - Etkinlik Hizmetleri</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo logo-centered">
+                <h1>Mini Orgzaar</h1>
+                <img src="{{ url_for('static', filename='img/orgzaar-logo.gif') }}" alt="Orgzaar Logo" class="logo-img">
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>🎉 Etkinliğinizi Düşleyin, Biz Gerçekleştirelim</h2>
+                <p>DJ'den dekorasyona, fotoğrafçılıktan cateringʼe kadar tüm etkinlik hizmetlerini keşfedin ve rezervasyon yapın.</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number" id="serviceCount">5</div>
+                        <div class="stat-label">Hizmet Kategorisi</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">API Erişimi</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">RESTful</div>
+                        <div class="stat-label">API Mimarisi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Combined Booking Section -->
+    <section class="booking-section">
+        <div class="container">
+            <h2 class="section-title">🎯 Rezervasyon Oluştur</h2>
+            <p class="section-subtitle">Hizmetlerinizi seçin ve rezervasyon talebinde bulunun</p>
+            
+            <div class="booking-form-container">
+                <form id="bookingForm" class="booking-form">
+                    <!-- Services Selection -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <label class="section-label">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                Mevcut Hizmetler
+                            </label>
+                            
+                            <!-- Search Box -->
+                            <div class="search-box">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                                <input type="text" id="serviceSearch" placeholder="Hizmet ara..." class="search-input">
+                            </div>
+                        </div>
+                        
+                        <!-- Horizontal Services Scroll -->
+                        <div class="services-scroll-container">
+                            <button type="button" class="scroll-btn scroll-left" id="scrollLeft" style="display: none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M15 18l-6-6 6-6"></path>
+                                </svg>
+                            </button>
+                            
+                            <div class="services-horizontal" id="servicesHorizontal">
+                                <!-- Services will be loaded here dynamically -->
+                                <div class="loading-inline">
+                                    <div class="spinner-small"></div>
+                                    <p>Yükleniyor...</p>
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="scroll-btn scroll-right" id="scrollRight">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M9 18l6-6-6-6"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Selected Services Summary -->
+                        <div class="selected-summary-container">
+                            <div class="selected-summary-header">
+                                <div class="selected-count">
+                                    <span id="selectedCount">0</span> hizmet seçildi
+                                </div>
+                                <div class="selected-total">
+                                    Toplam: <span id="totalPrice" class="price">0 ₺</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Selected Services List -->
+                            <div class="selected-services-list" id="selectedServicesList">
+                                <p class="empty-message">Henüz hizmet seçmediniz. Yukarıdaki hizmetlerden seçim yapın.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event Date -->
+                    <div class="form-group">
+                        <label for="eventDate">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Etkinlik Tarihi
+                        </label>
+                        <input type="date" id="eventDate" name="eventDate" required>
+                        <small class="input-help">Format: YYYY-MM-DD (Örn: 2025-12-24)</small>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label for="notes">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Notlar (Opsiyonel)
+                        </label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Etkinliğiniz hakkında özel notlar..."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Rezervasyon Talebi Oluştur
+                    </button>
+                </form>
+
+                <div id="bookingResult" class="booking-result" style="display: none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation Section -->
+    <section class="api-docs-section">
+        <div class="container">
+            <h2 class="section-title">📚 API Dokümantasyonu</h2>
+            <p class="section-subtitle">RESTful API endpoint'leri ve kullanım örnekleri</p>
+
+            <div class="api-endpoints">
+                <!-- GET Services Endpoint -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <code class="endpoint-path">/api/v1/services</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <h4>Hizmetleri Listeler</h4>
+                        <p>Tüm mevcut etkinlik hizmetlerini döndürür.</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Request</span>
+                                <button class="copy-btn" data-copy="curl-get">Kopyala</button>
+                            </div>
+                            <pre id="curl-get"><code>curl -X GET http://localhost:5000/api/v1/services</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Response (200 OK)</span>
+                            </div>
+                            <pre><code>[
+  {
+    "id": 1,
+    "name": "DJ Hizmeti (2 Saat)",
+    "category": "Müzik & Sanatçı",
+    "price": 5000
+  },
+  {
+    "id": 2,
+    "name": "Masa Süsleme (Romantik)",
+    "category": "Dekorasyon & Süsleme",
+    "price": 1500
+  }
+  ...
+]</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POST Bookings Endpoint -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <code class="endpoint-path">/api/v1/bookings</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <h4>Rezervasyon Talebi Oluşturur</h4>
+                        <p>Seçilen hizmetler için yeni bir rezervasyon talebi oluşturur.</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Request Body</span>
+                            </div>
+                            <pre><code>{
+  "service_ids": [1, 3],
+  "event_date": "2025-12-24",
+  "notes": "Yılbaşı kutlaması için." (opsiyonel)
+}</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Request</span>
+                                <button class="copy-btn" data-copy="curl-post">Kopyala</button>
+                            </div>
+                            <pre id="curl-post"><code>curl -X POST http://localhost:5000/api/v1/bookings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service_ids": [1, 3],
+    "event_date": "2025-12-24",
+    "notes": "Yılbaşı kutlaması için."
+  }'</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Response (201 Created)</span>
+                            </div>
+                            <pre><code>{
+  "message": "Rezervasyon talebiniz alındı.",
+  "booking_id": 5678
+}</code></pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Error Response (400 Bad Request)</span>
+                            </div>
+                            <pre><code>{
+  "error": "Geçersiz veri.",
+  "details": {
+    "event_date": "Tarih formatı YYYY-MM-DD olmalıdır ve gelecek bir tarih olmalıdır."
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Mini Orgzaar API</h4>
+                    <p>Teknik Değerlendirme Projesi</p>
+                    <p class="version">Version 1.0.0</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Teknolojiler</h4>
+                    <ul>
+                        <li>Flask 3.0.0</li>
+                        <li>Python 3.8+</li>
+                        <li>RESTful API</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Kaynaklar</h4>
+                    <ul>
+                        <li><a href="/api/v1/services">API Services</a></li>
+                        <li><a href="/api/v1/bookings">API Bookings</a></li>
+                        <li><a href="https://github.com">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Mini Orgzaar. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Flatpickr Initialization -->
+    <script>
+        // Flatpickr'i başlat - SADECE TARİH
+        flatpickr("#eventDate", {
+            enableTime: false,             // Saat seçimi KAPALI
+            dateFormat: "Y-m-d",           // YYYY-MM-DD formatı (API uyumlu)
+            locale: "tr",                  // Türkçe
+            minDate: "today",              // Bugünden öncesi seçilemesin
+            altInput: true,                // Kullanıcı dostu görünüm
+            altFormat: "d F Y",            // "24 Aralık 2025" (saat yok)
+            onChange: function(selectedDates, dateStr, instance) {
+                // Tarih seçildiğinde validasyon
+                if (selectedDates.length > 0) {
+                    const selected = selectedDates[0];
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    selected.setHours(0, 0, 0, 0);
+                    
+                    // Geçmiş tarih kontrolü
+                    if (selected < today) {
+                        showToast('❌ Geçmiş tarih seçilemez', 'error');
+                        instance.clear();
+                        return;
+                    }
+                    
+                    // Çok uzak gelecek kontrolü (1 yıl)
+                    const maxDate = new Date();
+                    maxDate.setFullYear(maxDate.getFullYear() + 1);
+                    if (selected > maxDate) {
+                        showToast('⚠️ Rezervasyon en fazla 1 yıl sonrası için yapılabilir', 'warning');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

@@ -6,8 +6,18 @@ import json
 
 
 def test_index_route(client):
-    """Ana sayfa (/) bilgi döndürmeli"""
+    """Ana sayfa (/) HTML arayüzü döndürmeli"""
     response = client.get('/')
+    
+    assert response.status_code == 200
+    assert b'<!DOCTYPE html>' in response.data
+    assert b'Mini Orgzaar' in response.data
+    assert b'Etkinlik Hizmetleri' in response.data
+
+
+def test_api_info_route(client):
+    """API bilgi endpoint'i (/api) JSON döndürmeli"""
+    response = client.get('/api')
     
     assert response.status_code == 200
     data = json.loads(response.data)

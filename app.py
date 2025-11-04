@@ -6,7 +6,7 @@ Author: Teknik Değerlendirme
 Date: 3 Kasım 2025
 """
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from api.services import services_bp
 from api.bookings import bookings_bp
 import logging
@@ -31,9 +31,16 @@ def create_app():
     app.register_blueprint(services_bp)
     app.register_blueprint(bookings_bp)
     
-    # Ana sayfa
+    # Ana sayfa - Web UI
     @app.route('/')
     def index():
+        """Ana sayfa - İnteraktif web arayüzü"""
+        return render_template('index.html')
+    
+    # API Info endpoint - JSON formatında API bilgisi
+    @app.route('/api')
+    def api_info():
+        """API bilgisi JSON formatında"""
         return jsonify({
             'message': 'Mini Orgzaar API\'ye hoş geldiniz!',
             'version': '1.0.0',
