@@ -342,7 +342,6 @@ async function handleBookingSubmit(event) {
         resultElement.className = 'booking-result success';
         resultElement.innerHTML = `
             <h4>✅ Rezervasyon Başarılı!</h4>
-            <p>Rezervasyon talebiniz alındı.</p>
             <p><strong>Rezervasyon ID:</strong> ${result.data.booking_id}</p>
             <p style="margin-top: 1rem; font-size: 0.9rem;">
                 ${result.data.message}
